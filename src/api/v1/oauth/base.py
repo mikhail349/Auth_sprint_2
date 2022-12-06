@@ -27,10 +27,10 @@ def create_blueprint(social_name: str, url_prefix: str,
     """
     blueprint = Blueprint(social_name, __name__, url_prefix=url_prefix)
 
-    @blueprint.route("/login", methods=["GET"])
+    @blueprint.route("/login", methods=["POST"])
     def login():
         """Callback для логина по средством кода."""
-        code = request.args.get("code", None, type=str)
+        code = request.json.get("code", None)
 
         oauth2 = OAuth2(client_id=client_id, client_secret=client_secret, token_url=token_url, base_url=base_url)
 
