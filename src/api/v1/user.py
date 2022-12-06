@@ -14,7 +14,7 @@ from src.services.user import UserService
 from src.storages.token import get_token_manager
 from src.utils.decorators import superuser_required
 
-user = Blueprint("user", __name__)
+user = Blueprint("user", __name__,  url_prefix="user")
 
 
 @jwt.token_in_blocklist_loader
