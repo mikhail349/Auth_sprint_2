@@ -10,7 +10,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - PGDATA=/var/lib/postgresql/data/pgdata/
     volumes:
-      - pg_auth_test:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
   tests:
     build: ../../.
     environment:
@@ -25,5 +25,6 @@ services:
       bash "tests/functional/run.sh"
 
 volumes:
-  pg_auth_test:
+  pgdata:
     external: true
+    name: ${POSTGRES_VOLUME_NAME}
