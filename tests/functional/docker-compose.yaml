@@ -10,7 +10,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - PGDATA=/var/lib/postgresql/data/pgdata/
     volumes:
-      - ${HOST_PGDATA}:/var/lib/postgresql/data
+      - pg_auth_test:/var/lib/postgresql/data
   tests:
     build: ../../.
     environment:
@@ -23,3 +23,7 @@ services:
       - .env
     entrypoint: >
       bash "tests/functional/run.sh"
+
+volumes:
+  pg_auth_test:
+    external: true

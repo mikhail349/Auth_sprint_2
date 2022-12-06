@@ -12,7 +12,8 @@
 ## Первый запуск
 
 1. Создать файл `.env` с переменными окружения по аналогии с файлом `.env.example`
-2. Запустить докер `docker compose up --build`
+2. Создать docker volume для Postgres `docker volume create pg_auth`
+3. Запустить докер `docker compose up --build`
 
 ## Первый локальный запуск
 
@@ -43,4 +44,5 @@
 
 1. Перейти в папку с тестами `cd tests/functional`
 2. Создать файл `.env` с переменными окружения по аналогии с файлом `.env.example`
-3. Запустить докер `docker compose up --build`
+3. Создать docker volume для Postgres `docker volume create pg_auth_test`
+4. Запустить докер `docker compose up --build`
