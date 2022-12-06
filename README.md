@@ -1,6 +1,6 @@
 # API-сервис аутентификации и управления правами
 
-Основной репозиторий находится [тут](https://github.com/mikhail349/Auth_sprint_1)
+Основной репозиторий находится [тут](https://github.com/mikhail349/Auth_sprint_2)
 
 В качестве ETL проекта используется [данный репозиторий](https://github.com/mikhail349ya/new_admin_panel_sprint_3)
 
