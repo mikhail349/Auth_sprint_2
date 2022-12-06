@@ -9,7 +9,7 @@ db = SQLAlchemy()
 def init_db(app: Flask):
     """Инициализация базы данных."""
     from src.models import (auth_history, permissions,  # noqa: F401
-                            relations, roles, user)
+                            relations, roles, user, social_account)
 
     app.config[
         "SQLALCHEMY_DATABASE_URI"
