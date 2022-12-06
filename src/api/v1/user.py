@@ -9,7 +9,6 @@ from src.core.config import app_settings
 from src.db.db import db  # noqa F401
 from src.models.auth_history import AuthEvent
 from src.models.user import User
-from src.services.auth_history import AuthHistoryService
 from src.services.user import UserService
 from src.storages.token import get_token_manager
 from src.utils.decorators import superuser_required
@@ -39,15 +38,7 @@ def login():
         msg = jsonify(messages.LOGIN_INCORRECT)
         return msg, HTTPStatus.UNAUTHORIZED
 
-    # create tokens
-    access_token, refresh_token = UserService.create_tokens(user)
-
-    # set access_refresh mapping
-    token_manager = get_token_manager()
-    token_manager.set_access_refresh_map(access_token, refresh_token)
-
-    user_agent = request.headers.get("User-Agent")
-    AuthHistoryService.create(user=user.id, user_agent=user_agent)
+    access_token, refresh_token = UserService.login(user)
 
     # set tokens to cookies
     response = jsonify(access_token=access_token, refresh_token=refresh_token)

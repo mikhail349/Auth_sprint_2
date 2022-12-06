@@ -62,8 +62,9 @@ class YandexOAuth2Settings(BaseConfig):
     """Секрет клиента."""
     token_url: str = Field("https://oauth.yandex.ru/token", env="YANDEX_OAUTH2_TOKEN_URL")
     """URL получения токена."""
-    user_url: str = Field("https://login.yandex.ru/info", env="YANDEX_OAUTH2_USER_URL")
-    """URL получения информации о пользователе."""
+    base_url: str = Field("https://login.yandex.ru/info", env="YANDEX_OAUTH2_BASE_URL")
+    """URL получения информации из Яндекс API."""
+
 
 class AppSettings(BaseConfig):
     default_page: int = 1

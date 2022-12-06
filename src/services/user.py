@@ -1,11 +1,17 @@
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from flask_jwt_extended import (create_access_token, create_refresh_token)
+from flask import request
 
 from src.db.db import db
 from src.models.roles import Role
 from src.models.user import User
+from src.models.social_account import SocialAccount
 from src.services.base import BaseService
+from src.services.auth_history import AuthHistoryService
+from src.storages.token import get_token_manager
+from src.utils.context_managers import transaction
+from src.utils.random import generate_string
 
 
 class UserService(BaseService):
@@ -31,6 +37,19 @@ class UserService(BaseService):
         db.session.add(user)
         db.session.commit()
         return user
+
+    @classmethod
+    def create_by_social_account(cls, social_id: str, social_name: str) -> User:
+        with transaction():
+            login = cls.generate_login()
+            password = generate_string()
+
+            user = cls.model(login=login, password=cls.hash_password(password))
+            social_account = SocialAccount(user=user, social_id=social_id, social_name=social_name)
+            db.session.add(user)
+            db.session.add(social_account)
+
+            return user
 
     @classmethod
     def update(cls, user: User, login: str, password: str, **kwargs) -> User:
@@ -68,6 +87,13 @@ class UserService(BaseService):
         return cls.create(login=login, password=password, is_superuser=True)
 
     @classmethod
+    def generate_login(cls):
+        login = generate_string()
+        while cls.model.query.filter_by(login=login).first():
+            login = generate_string()
+        return login
+
+    @classmethod
     def authenticate(cls, login: str, password: str) -> User | None:
         """Аутентифицировать пользователя.
 
@@ -89,6 +115,17 @@ class UserService(BaseService):
             return user
         except VerifyMismatchError:
             return None
+
+    @classmethod
+    def login(cls, user: User):
+        access_token, refresh_token = UserService.create_tokens(user)
+
+        token_manager = get_token_manager()
+        token_manager.set_access_refresh_map(access_token, refresh_token)
+
+        user_agent = request.headers.get("User-Agent")
+        AuthHistoryService.create(user=user.id, user_agent=user_agent)
+        return access_token, refresh_token
 
     @classmethod
     def hash_password(cls, password: str) -> str:
@@ -152,6 +189,16 @@ class UserService(BaseService):
         return access_token, refresh_token
 
     @classmethod
+    def get_by_social_account(cls, social_id: str, social_name: str) -> User | None:
+        account = (
+            SocialAccount.query
+                         .filter_by(social_id=social_id, social_name=social_name)
+                         .one_or_none()
+        )
+        if account:
+            return account.user
+
+    @classmethod
     def set_role(self, user: User, role_name: str) -> User:
         """Назначить роль пользователю."""
         role = Role.query.filter_by(name=role_name).first()
@@ -161,7 +208,7 @@ class UserService(BaseService):
         return user
 
     @classmethod
-    def remove_role(self, user: User, role_name: str):
+    def remove_role(cls, user: User, role_name: str):
         """Удалить роль у пользователя."""
         role = Role.query.filter_by(name=role_name).first()
         user.roles.remove(role)

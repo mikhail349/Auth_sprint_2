@@ -4,7 +4,7 @@ from flask_restful import Api
 
 from src.api.v1 import user
 from src.api.v1.openapi import openapi
-from src.api.v1.oauth.base import oauth
+from src.api.v1.oauth.oauth import oauth
 from src.app.extensions import jwt
 
 from src.core.config import jwt_settings, redis_settings
