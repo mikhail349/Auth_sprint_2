@@ -40,6 +40,16 @@ class UserService(BaseService):
 
     @classmethod
     def create_by_social_account(cls, social_id: str, social_name: str) -> User:
+        """Создать пользователя по аккаунту из соц. сети.
+
+        Args:
+            social_id: ИД пользователя в соц. сети
+            social_name: название соц. сети
+
+        Returns:
+            User: пользователь
+
+        """
         with transaction():
             login = cls.generate_login()
             password = generate_string()
@@ -87,7 +97,13 @@ class UserService(BaseService):
         return cls.create(login=login, password=password, is_superuser=True)
 
     @classmethod
-    def generate_login(cls):
+    def generate_login(cls) -> str:
+        """Сгенерировать логин.
+
+        Returns:
+            str: логин
+
+        """
         login = generate_string()
         while cls.model.query.filter_by(login=login).first():
             login = generate_string()
@@ -117,7 +133,16 @@ class UserService(BaseService):
             return None
 
     @classmethod
-    def login(cls, user: User):
+    def login(cls, user: User) -> tuple[str, str]:
+        """Залогинить пользователя.
+
+        Args:
+            user: пользователь
+
+        Returns:
+            tuple[str, str]: access-token, refresh-token
+
+        """
         access_token, refresh_token = UserService.create_tokens(user)
 
         token_manager = get_token_manager()
@@ -190,6 +215,16 @@ class UserService(BaseService):
 
     @classmethod
     def get_by_social_account(cls, social_id: str, social_name: str) -> User | None:
+        """Получить пользователя по аккаунту из соц. сети.
+
+        Args:
+            social_id: ИД пользователя в соц. сети
+            social_name: название соц. сети
+
+        Returns:
+            User | None: пользователь или None
+
+        """
         account = (
             SocialAccount.query
                          .filter_by(social_id=social_id, social_name=social_name)
@@ -197,6 +232,23 @@ class UserService(BaseService):
         )
         if account:
             return account.user
+
+    @classmethod
+    def get_or_create_by_social_account(cls, social_id: str, social_name: str) -> User:
+        """Получить или создать, если не существует, пользователя по аккаунту из соц. сети.
+
+        Args:
+            social_id: ИД пользователя в соц. сети
+            social_name: название соц. сети
+
+        Returns:
+            User: пользователь
+
+        """
+        user = cls.get_by_social_account(social_id=social_id, social_name=social_name)
+        if not user:
+            user = cls.create_by_social_account(social_id=social_id, social_name=social_name)
+        return user
 
     @classmethod
     def set_role(self, user: User, role_name: str) -> User:
