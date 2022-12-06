@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 services:
   redis:
     image: redis:alpine
@@ -10,7 +10,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - PGDATA=/var/lib/postgresql/data/pgdata/
     volumes:
-      - ${HOST_PGDATA}:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
   tests:
     build: ../../.
     environment:
@@ -23,3 +23,8 @@ services:
       - .env
     entrypoint: >
       bash "tests/functional/run.sh"
+
+volumes:
+  pgdata:
+    external: true
+    name: ${POSTGRES_VOLUME_NAME}
