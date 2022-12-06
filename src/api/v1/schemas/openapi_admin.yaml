@@ -1,0 +1,401 @@
+openapi: 3.0.3
+info:
+  title: API управления доступом
+  description: |-
+    Возможности:
+    - CRUD прав
+    - CRUD ролей
+    - Включение и исключение права из роли 
+    - Включение и исключение пользователя из роли
+  termsOfService: http://swagger.io/terms/
+  version: 1.2.1
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+tags:
+  - name: права
+    description: Добавление, изменение, удаление и просмотр прав
+  - name: роли
+    description: Добавление, изменение, удаление и просмотр ролей
+  - name: пользователь
+    description: Добавление/исключение из роли
+components:
+  schemas:
+    Permission:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: view_film
+          
+    PermissionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: Gcc55edda-7acd-4128-877d-02b94430896a
+        name:
+          type: string
+          example: view_film
+          
+    Role:
+      required:
+        - name
+        - perms
+      type: object
+      properties:
+        name:
+          type: string
+          example: moderator
+        perms:
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: Gcc55edda-7acd-4128-877d-02b94430896a
+
+    RoleResponse:
+      required:
+        - name
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: Gcc55edda-7acd-4128-877d-02b94430896a
+        name:
+          type: string
+          example: moderator
+        perms:
+          type: array
+          items:
+            type: string
+            format: uuid
+            example: Gcc55edda-7acd-4128-877d-02b94430896a
+  
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+  responses:
+    UnauthorizedError:
+      description: Access-token отсутствует/невалидный или срок действия истек
+    PermissionOk:
+      description: Успешно
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PermissionResponse'
+    PermissionsOk:
+      description: Успешно
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/PermissionResponse'
+    PermissionNotFound:
+      description: Право не найдено
+    PermissionDuplicate:
+      description: Право с таким названием уже присутствует в системе
+      
+    RoleOk:
+      description: Успешно
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoleResponse'
+    RolesOk:
+      description: Успешно
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/RoleResponse'
+    RoleDuplicate:
+      description: Роль с таким названием уже присутствует в системе
+    RoleNotFound:
+      description: Роль не найдена
+    
+
+security:
+  - BearerAuth: [] 
+
+paths:
+  /perms:
+    post:
+      tags:
+        - права
+      summary: Добавить
+      description: Добавить право
+      requestBody:
+        description: Название права
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Permission'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/PermissionOk'
+        '400':
+          $ref: '#/components/responses/PermissionDuplicate'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    get:
+      tags:
+        - права
+      summary: Получить все права
+      description: Получить все права
+      responses:
+        '200':
+          $ref: '#/components/responses/PermissionsOk'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /perms/{id}:
+    put:
+      tags:
+        - права
+      summary: Изменить
+      description: Изменить право
+      parameters:
+        - name: id
+          in: path
+          description: ID права
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: Gcc55edda-7acd-4128-877d-02b94430896a
+      requestBody:
+        description: Название права
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Permission'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/PermissionOk'
+        '400':
+          $ref: '#/components/responses/PermissionDuplicate'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/PermissionNotFound'
+    get:
+      tags:
+        - права
+      summary: Получить
+      description: Получить право
+      parameters:
+        - name: id
+          in: path
+          description: ID права
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: Gcc55edda-7acd-4128-877d-02b94430896a
+      responses:
+        '200':
+          $ref: '#/components/responses/PermissionOk'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/PermissionNotFound'
+          
+    delete:
+      tags:
+        - права
+      summary: Удалить
+      description: Удалить право
+      parameters:
+        - name: id
+          in: path
+          description: ID права
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: Gcc55edda-7acd-4128-877d-02b94430896a
+      responses:
+        '200':
+          description: Успешно
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/PermissionNotFound'
+          
+  /roles:
+    post:
+      tags:
+        - роли
+      summary: Добавить
+      description: Добавить роль
+      requestBody:
+        description: Название роли и список прав
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/RoleOk'
+        '400':
+          $ref: '#/components/responses/RoleDuplicate'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+          
+    get:
+      tags:
+        - роли
+      summary: Получить все роли
+      description: Получить все роли
+      responses:
+        '200':
+          $ref: '#/components/responses/RolesOk'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+          
+  /roles/{id}:
+    put:
+      tags:
+        - роли
+      summary: Изменить
+      description: Изменить роль
+      parameters:
+        - name: id
+          in: path
+          description: ID роли
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: Gcc55edda-7acd-4128-877d-02b94430896a
+      requestBody:
+        description: Название роли и список прав
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/RoleOk'
+        '400':
+          $ref: '#/components/responses/RoleDuplicate'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/RoleNotFound'
+    get:
+      tags:
+        - роли
+      summary: Получить
+      description: Получить роль
+      parameters:
+        - name: id
+          in: path
+          description: ID роли
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: Gcc55edda-7acd-4128-877d-02b94430896a
+      responses:
+        '200':
+          $ref: '#/components/responses/RoleOk'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/RoleNotFound'
+          
+    delete:
+      tags:
+        - роли
+      summary: Удалить
+      description: Удалить роль
+      parameters:
+        - name: id
+          in: path
+          description: ID роли
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: Gcc55edda-7acd-4128-877d-02b94430896a
+      responses:
+        '200':
+          description: Успешно
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/RoleNotFound'
+          
+  /users/{user_id}/roles/{role_name}:
+    post:
+      tags:
+        - пользователь
+      summary: Включить пользователя в роль
+      description: Включить пользователя в роль
+      parameters:
+        - name: user_id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: Gcc55edda-7acd-4128-877d-02b94430896a
+        - name: role_name
+          in: path
+          description: Название роли
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешно
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Роль или Пользователь не найдены
+          
+    delete:
+      tags:
+        - пользователь
+      summary: Исключить пользователя из роли
+      description: Исключить пользователя из роли
+      parameters:
+        - name: user_id
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: Gcc55edda-7acd-4128-877d-02b94430896a
+        - name: role_name
+          in: path
+          description: Название роли
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешно
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Роль или Пользователь не найдены
+  

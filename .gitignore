@@ -1,0 +1,15 @@
+# python
+__pycache__/
+*.py[cod]
+
+# envs
+.env
+venv/
+.venv/
+
+# dev
+docker-compose.dev.yaml
+.env_export.example
+
+# temp
+tmp*

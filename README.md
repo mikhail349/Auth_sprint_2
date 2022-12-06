@@ -1,20 +1,46 @@
-# Проектная работа 7 спринта
+# API-сервис аутентификации и управления правами
 
-Упростите регистрацию и аутентификацию пользователей в Auth-сервисе, добавив вход через социальные сервисы. Список сервисов выбирайте исходя из целевой аудитории онлайн-кинотеатра — подумайте, какими социальными сервисами они пользуются. Например, использовать [OAuth от Github](https://docs.github.com/en/free-pro-team@latest/developers/apps/authorizing-oauth-apps){target="_blank"} — не самая удачная идея. Ваши пользователи не разработчики и вряд ли имеют аккаунт на Github. А вот добавить Twitter, Facebook, VK, Google, Yandex или Mail будет хорошей идеей.
+Основной репозиторий находится [тут](https://github.com/mikhail349/Auth_sprint_1)
 
-Вам не нужно делать фронтенд в этой задаче и реализовывать собственный сервер OAuth. Нужно реализовать протокол со стороны потребителя.
+В качестве ETL проекта используется [данный репозиторий](https://github.com/mikhail349ya/new_admin_panel_sprint_3)
 
-Информация по OAuth у разных поставщиков данных: 
+## Документация API (Swagger)
 
-- [Twitter](https://developer.twitter.com/en/docs/authentication/overview){target="_blank"},
-- [Facebook](https://developers.facebook.com/docs/facebook-login/){target="_blank"},
-- [VK](https://vk.com/dev/access_token){target="_blank"},
-- [Google](https://developers.google.com/identity/protocols/oauth2){target="_blank"},
-- [Yandex](https://yandex.ru/dev/oauth/?turbo=true){target="_blank"},
-- [Mail](https://api.mail.ru/docs/guides/oauth/){target="_blank"}.
+1. API личного кабинета пользователя доступно по api `/api/v1/openapi/account`
+2. API администратора прав и ролей доступно по api `/api/v1/openapi/admin`
 
-## Дополнительное задание
+## Первый запуск
 
-Реализуйте возможность открепить аккаунт в соцсети от личного кабинета. 
+1. Создать файл `.env` с переменными окружения по аналогии с файлом `.env.example`
+2. Запустить докер `docker compose up --build`
 
-Решение залейте в репозиторий текущего спринта и отправьте на ревью.
+## Первый локальный запуск
+
+1. Сформировать виртуальное Python-окружение `python -m venv venv`
+2. Установить зависимости `pip install -r requirements`
+3. Создать файл `.env` с переменными окружения по аналогии с файлом `.env.example`
+4. Запустить Postgres и Redis
+5. Перейти в папку с приложением `cd src/app`
+6. Применить миграции `flask db upgrade`
+7. Запустить приложение `python wsgi.py`
+
+## Миграция после внесения изменений в `src/models`
+
+1. Перейти в папку с приложением `cd src/app`
+2. Создать файл миграций `flask db migrate -m "<Краткое описание изменений в БД>"`
+3. Применить миграции `flask db upgrade`
+
+## Создание суперпользователя
+
+1. Перейти в папку с приложением `cd src/app`
+2. Выполнить команду `flask createsuperuser` и следовать инструкциям
+
+## Линтер
+
+Запуск: в корне проекта `flake8`. Для настройки используется файл `setup.cfg`
+
+## Тестирование
+
+1. Перейти в папку с тестами `cd tests/functional`
+2. Создать файл `.env` с переменными окружения по аналогии с файлом `.env.example`
+3. Запустить докер `docker compose up --build`
