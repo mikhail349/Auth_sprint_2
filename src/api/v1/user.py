@@ -47,7 +47,9 @@ def login():
     token_manager.set_access_refresh_map(access_token, refresh_token)
 
     user_agent = request.headers.get("User-Agent")
-    AuthHistoryService.create(user=user.id, user_agent=user_agent)
+    AuthHistoryService.create(
+        user=user.id, user_agent=user_agent,
+        user_device_type=UserService.get_user_device_type(user_agent))
 
     # set tokens to cookies
     response = jsonify(access_token=access_token, refresh_token=refresh_token)
