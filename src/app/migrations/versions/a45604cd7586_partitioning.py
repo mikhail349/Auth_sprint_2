@@ -36,6 +36,10 @@ def upgrade():
 
 
 def downgrade():
+    op.execute("""DROP TABLE IF EXISTS "auth_history_smart" """)
+    op.execute("""DROP TABLE IF EXISTS "auth_history_mobile" """)
+    op.execute("""DROP TABLE IF EXISTS "auth_history_web" """)
+    op.execute("""DROP TABLE IF EXISTS "auth_history_other" """)
     op.drop_table('auth_history')
     op.create_table('auth_history',
     sa.Column('id', postgresql.UUID(), autoincrement=False, nullable=False),
