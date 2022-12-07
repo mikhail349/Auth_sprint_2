@@ -164,5 +164,5 @@ def remove_social_account(user, id):
     if not social_account:
         return jsonify(messages.SOCIAL_ACCOUNT_NOT_FOUND), HTTPStatus.NOT_FOUND
 
-    SocialAccountService.delete(social_account)
+    UserService.remove_social_account(user, social_account)
     return Response(status=HTTPStatus.OK)
