@@ -31,6 +31,13 @@ target_db = current_app.extensions['migrate'].db
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+def include_object(object, name, type_, reflected, compare_to):
+    if type_ == "table" and name in ['auth_history_smart', 'auth_history_mobile',
+                                     'auth_history_web', 'auth_history_other']:
+        return False
+    else:
+        return True
+
 
 def get_metadata():
     if hasattr(target_db, 'metadatas'):
@@ -52,7 +59,8 @@ def run_migrations_offline():
     """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=url, target_metadata=get_metadata(), literal_binds=True
+        url=url, target_metadata=get_metadata(), literal_binds=True,
+        include_object=include_object
     )
 
     with context.begin_transaction():
@@ -81,6 +89,7 @@ def run_migrations_online():
 
     with connectable.connect() as connection:
         context.configure(
+            include_object=include_object,
             connection=connection,
             target_metadata=get_metadata(),
             process_revision_directives=process_revision_directives,
