@@ -37,12 +37,12 @@ def create_blueprint(social_name: str, url_prefix: str,
         response = oauth2.get_auth(code)
         auth = response.json()
         if response.status_code != HTTPStatus.OK:
-            return jsonify(auth)
+            return (response.content, response.status_code, response.headers.items())
 
         response = oauth2.get_info(auth['access_token'])
         info = response.json()
         if response.status_code != HTTPStatus.OK:
-            return jsonify(info)
+            return (response.content, response.status_code, response.headers.items())
 
         user = UserService.get_or_create_by_social_account(social_id=info['id'], social_name=social_name)
         access_token, refresh_token = UserService.login(user)
