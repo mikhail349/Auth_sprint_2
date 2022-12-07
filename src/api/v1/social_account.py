@@ -9,7 +9,7 @@ from src.services.social_account import SocialAccountService
 from src.api.v1 import response_messages
 
 
-social_account = Blueprint("social_account", __name__,  url_prefix="social_account")
+social_account = Blueprint("social_account", __name__, url_prefix="social_account")
 
 
 @social_account.route("/<string:id>", methods=["DELETE"])
