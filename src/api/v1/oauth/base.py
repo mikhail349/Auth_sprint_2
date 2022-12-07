@@ -1,9 +1,7 @@
 from http import HTTPStatus
 
 from flask import Blueprint, request, jsonify
-from requests import Response
 
-from src.models.user import User
 from src.services.user import UserService
 from src.services.oauth2 import OAuth2
 
