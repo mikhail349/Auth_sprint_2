@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, Response
 from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 
 import src.api.v1.response_messages as messages
@@ -9,7 +9,9 @@ from src.core.config import app_settings
 from src.db.db import db  # noqa F401
 from src.models.auth_history import AuthEvent
 from src.models.user import User
+from src.models.social_account import SocialAccount
 from src.services.user import UserService
+from src.services.social_account import SocialAccountService
 from src.storages.token import get_token_manager
 from src.utils.decorators import superuser_required
 
@@ -165,3 +167,18 @@ def remove_role(user_id, role_name):
         return jsonify(messages.USER_DOESNT_EXIST), HTTPStatus.BAD_REQUEST
     UserService.remove_role(user, role_name)
     return jsonify(messages.USER_ROLES_DELETED), HTTPStatus.OK
+
+
+@user.route("/social_accounts/<string:id>", methods=["DELETE"])
+@jwt_required()
+def remove_social_account(id):
+    """Отвязать свой аккаунт соцсети."""
+
+    identity = get_jwt_identity()
+    user = User.query.filter_by(login=identity).one_or_none()
+    social_account = SocialAccount.query.filter_by(id=id, user_id=user.id).one_or_none()
+    if not social_account:
+        return jsonify(messages.SOCIAL_ACCOUNT_NOT_FOUND), HTTPStatus.NOT_FOUND
+
+    SocialAccountService.delete(social_account)
+    return Response(status=HTTPStatus.OK)

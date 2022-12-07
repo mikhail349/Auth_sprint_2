@@ -10,7 +10,7 @@ info:
     - Изменение логина и/или пароля
     - Получение истории входа в аккаунт
   termsOfService: http://swagger.io/terms/
-  version: 1.3.1
+  version: 1.3.2
 externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
@@ -27,6 +27,13 @@ components:
         msg:
           type: string
           example: Неверный логин или пароль.
+          
+    SocialAccountNotFound:
+      type: object
+      properties:
+        msg:
+          type: string
+          example: Social account not found.
     
     Tokens:
       required:
@@ -219,7 +226,36 @@ paths:
                 items:
                   $ref: '#/components/schemas/LoginHistory'
         '401':
-          $ref: '#/components/responses/UnauthorizedError' 
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /user/social_accounts/{id}:
+    delete:
+      tags:
+        - пользователь
+      summary: Отвязать аккаунт соцсети
+      description: Отвязать аккаунт соцсети
+      security: 
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID записи в реестре аккаунтов соцсетей 
+          required: true
+          schema:
+            type: string
+            format: uuid
+            example: Gcc55edda-7acd-4128-877d-02b94430896a
+      responses:
+        '200':
+          description: Успех
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Запись не найдена 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialAccountNotFound'
     
   /user/logout:
     post:

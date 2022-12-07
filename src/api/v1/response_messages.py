@@ -61,3 +61,7 @@ USER_ROLES_UPDATED = {
 USER_ROLES_DELETED = {
     "msg": "User's roles deleted."
 }
+
+SOCIAL_ACCOUNT_NOT_FOUND = {
+    "msg": "Social account not found."
+}
