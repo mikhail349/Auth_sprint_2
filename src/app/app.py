@@ -1,6 +1,7 @@
 from flask import Flask, Blueprint
 from flask_migrate import Migrate
 from flask_restful import Api
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 from src.api.v1 import user
 from src.api.v1.openapi import openapi
@@ -13,7 +14,7 @@ from src.api.v1.roles import Roles
 from src.db.db import db, init_db
 from src.app.commands import init_commands
 from src.utils.jaeger_tracing import configure_tracer
-from opentelemetry.instrumentation.flask import FlaskInstrumentor
+
 
 BASE_API_URL = "/api/v1"
 
