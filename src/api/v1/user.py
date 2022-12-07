@@ -13,7 +13,7 @@ from src.models.social_account import SocialAccount
 from src.services.user import UserService
 from src.services.social_account import SocialAccountService
 from src.storages.token import get_token_manager
-from src.utils.decorators import superuser_required, login_required
+from src.utils.decorators import superuser_required, user_required
 
 user = Blueprint("user", __name__,  url_prefix="user")
 
@@ -107,7 +107,7 @@ def register():
 
 
 @user.route("/update", methods=["PUT"])
-@login_required()
+@user_required()
 def update(user):
     username = request.json.get("username", None)
     password = request.json.get("password", None)
@@ -122,7 +122,7 @@ def update(user):
 
 
 @user.route("/login_history", methods=["GET"])
-@login_required()
+@user_required()
 def login_history(user):
     """Get user login history endpoint"""
 
@@ -156,7 +156,7 @@ def remove_role(user_id, role_name):
 
 
 @user.route("/social_accounts/<string:id>", methods=["DELETE"])
-@login_required()
+@user_required()
 def remove_social_account(user, id):
     """Отвязать свой аккаунт соцсети."""
 

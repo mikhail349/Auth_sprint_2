@@ -22,7 +22,7 @@ def superuser_required():
     return decorator
 
 
-def login_required():
+def user_required():
     """Декоратор доступа, который в endpoint передает инстанс user."""
     def decorator(endpoint):
         @functools.wraps(endpoint)
