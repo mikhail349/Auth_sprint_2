@@ -270,6 +270,13 @@ class UserService(BaseService):
         user.roles.remove(role)
         db.session.add(user)
         db.session.commit()
+    
+    @classmethod
+    def remove_social_account(cls, user: User, social_account: SocialAccount):
+        """Отвязать аккаунт соцсети."""
+        user.social_accounts.remove(social_account)
+        db.session.add(user)
+        db.session.commit()
 
     @staticmethod
     def get_user_device_type(user_agent: str) -> str:
