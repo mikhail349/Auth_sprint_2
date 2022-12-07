@@ -11,7 +11,7 @@ from src.services.oauth2 import OAuth2
 def create_blueprint(social_name: str, url_prefix: str,
                      client_id: str, client_secret: str,
                      token_url: str, base_url: str) -> Blueprint:
-    """Создать blueprint, реализующий endoint /login?code=<code> для OAuth2.
+    """Создать blueprint, реализующий endpoint /login для OAuth2.
 
     Args:
         social_name: имя социальной сети
