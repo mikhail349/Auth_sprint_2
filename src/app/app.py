@@ -5,7 +5,6 @@ from flask_restful import Api
 from src.api.v1 import user
 from src.api.v1.openapi import openapi
 from src.api.v1.oauth.oauth import oauth
-from src.api.v1.social_account import social_account
 from src.app.extensions import jwt
 
 from src.core.config import jwt_settings, redis_settings
@@ -30,7 +29,6 @@ jwt.init_app(app)
 # blueprints
 root = Blueprint(BASE_API_URL, __name__, url_prefix=BASE_API_URL)
 root.register_blueprint(user)
-root.register_blueprint(social_account)
 root.register_blueprint(openapi)
 root.register_blueprint(oauth)
 app.register_blueprint(root)

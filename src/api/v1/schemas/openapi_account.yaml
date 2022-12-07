@@ -17,8 +17,6 @@ externalDocs:
 tags:
   - name: пользователь
     description: Действия с пользователем
-  - name: аккаунт соцсети
-    description: Действия с аккаунтами соцсетей
 components:
   schemas:
     Message:
@@ -230,10 +228,10 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedError'
 
-  /social_account/{id}:
+  /user/social_accounts/{id}:
     delete:
       tags:
-        - аккаунт соцсети
+        - пользователь
       summary: Отвязать аккаунт соцсети
       description: Отвязать аккаунт соцсети
       security: 
