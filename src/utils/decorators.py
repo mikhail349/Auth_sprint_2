@@ -22,7 +22,7 @@ def superuser_required():
     return decorator
 
 def login_required():
-    """Декоратор доступа."""
+    """Декоратор доступа, который в endpoint передает инстанс user."""
     def decorator(endpoint):
         @functools.wraps(endpoint)
         def wrapper(*args, **kwargs):
@@ -31,6 +31,6 @@ def login_required():
             user = User.query.filter_by(login=identity).one_or_none()
             if not user:
                 return jsonify(USER_DOESNT_EXIST), HTTPStatus.BAD_REQUEST
-            return endpoint(user, *args, **kwargs)
+            return endpoint(user=user, *args, **kwargs)
         return wrapper
     return decorator
