@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from flask import Blueprint, jsonify, request, Response
-from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt, jwt_required
 
 import src.api.v1.response_messages as messages
 from src.app.extensions import jwt
@@ -13,7 +13,7 @@ from src.models.social_account import SocialAccount
 from src.services.user import UserService
 from src.services.social_account import SocialAccountService
 from src.storages.token import get_token_manager
-from src.utils.decorators import superuser_required
+from src.utils.decorators import superuser_required, login_required
 
 user = Blueprint("user", __name__,  url_prefix="user")
 
@@ -70,7 +70,6 @@ def logout():
 def refresh():
     """Token refresh endpoint"""
 
-    identity = get_jwt_identity()
     jwt_dict = get_jwt()
     refresh_jti = jwt_dict.get("jti")
 
@@ -82,7 +81,6 @@ def refresh():
         return jsonify(messages.REFRESH_FAILED), HTTPStatus.UNAUTHORIZED
 
     token_manager.revoke_token_jti(refresh_jti)
-    user = User.query.filter_by(login=identity).one_or_none()
     access_token, refresh_token = UserService.create_tokens(user)
     return jsonify(access_token=access_token, refresh_token=refresh_token), HTTPStatus.OK
 
@@ -109,19 +107,12 @@ def register():
 
 
 @user.route("/update", methods=["PUT"])
-@jwt_required()
-def update():
+@login_required()
+def update(user):
     username = request.json.get("username", None)
     password = request.json.get("password", None)
     if not username or not password:
         return jsonify(messages.WRONG_INPUT), HTTPStatus.BAD_REQUEST
-
-    identity = get_jwt_identity()
-    # check username and password
-    user = User.query.filter_by(login=identity).one_or_none()
-
-    if not user:
-        return jsonify(messages.USER_DOESNT_EXIST), HTTPStatus.BAD_REQUEST
 
     # update user in db
     UserService.update(user, login=username, password=password)
@@ -131,15 +122,10 @@ def update():
 
 
 @user.route("/login_history", methods=["GET"])
-@jwt_required()
-def login_history():
+@login_required()
+def login_history(user):
     """Get user login history endpoint"""
 
-    # collect history
-    identity = get_jwt_identity()
-    user = User.query.filter_by(login=identity).one_or_none()
-    if not user:
-        return jsonify(messages.USER_DOESNT_EXIST), HTTPStatus.BAD_REQUEST
     page = request.args.get('page', app_settings.default_page, type=int)
     size = request.args.get('size', app_settings.default_page_size, type=int)
     history = AuthEvent.query.filter_by(user=user.id).paginate(page=page,
@@ -170,12 +156,10 @@ def remove_role(user_id, role_name):
 
 
 @user.route("/social_accounts/<string:id>", methods=["DELETE"])
-@jwt_required()
-def remove_social_account(id):
+@login_required()
+def remove_social_account(user, id):
     """Отвязать свой аккаунт соцсети."""
 
-    identity = get_jwt_identity()
-    user = User.query.filter_by(login=identity).one_or_none()
     social_account = SocialAccount.query.filter_by(id=id, user_id=user.id).one_or_none()
     if not social_account:
         return jsonify(messages.SOCIAL_ACCOUNT_NOT_FOUND), HTTPStatus.NOT_FOUND
