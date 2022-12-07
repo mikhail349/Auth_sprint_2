@@ -143,13 +143,17 @@ class UserService(BaseService):
             tuple[str, str]: access-token, refresh-token
 
         """
-        access_token, refresh_token = UserService.create_tokens(user)
+        access_token, refresh_token = cls.create_tokens(user)
 
         token_manager = get_token_manager()
         token_manager.set_access_refresh_map(access_token, refresh_token)
 
         user_agent = request.headers.get("User-Agent")
-        AuthHistoryService.create(user=user.id, user_agent=user_agent)
+        AuthHistoryService.create(
+            user=user.id,
+            user_agent=user_agent,
+            user_device_type=cls.get_user_device_type(user_agent)
+        )
         return access_token, refresh_token
 
     @classmethod
@@ -266,3 +270,11 @@ class UserService(BaseService):
         user.roles.remove(role)
         db.session.add(user)
         db.session.commit()
+
+    @staticmethod
+    def get_user_device_type(user_agent: str) -> str:
+        """Возвращает значение user_device_type на основе user agent."""
+        for device in ["smart", "mobile", "web"]:
+            if device in user_agent.lower():
+                return device
+        return "other"
