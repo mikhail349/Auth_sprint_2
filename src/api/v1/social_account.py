@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from flask import Blueprint, Response, jsonify
-from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from src.models.user import User
 from src.models.social_account import SocialAccount
@@ -22,6 +22,6 @@ def delete(id):
     social_account = SocialAccount.query.filter_by(id=id, user_id=user.id).one_or_none()
     if not social_account:
         return jsonify(response_messages.SOCIAL_ACCOUNT_NOT_FOUND), HTTPStatus.NOT_FOUND
-    
+
     SocialAccountService.delete(social_account)
     return Response(status=HTTPStatus.OK)

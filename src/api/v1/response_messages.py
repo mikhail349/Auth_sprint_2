@@ -65,4 +65,3 @@ USER_ROLES_DELETED = {
 SOCIAL_ACCOUNT_NOT_FOUND = {
     "msg": "Social account not found."
 }
-
