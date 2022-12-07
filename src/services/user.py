@@ -167,3 +167,11 @@ class UserService(BaseService):
         user.roles.remove(role)
         db.session.add(user)
         db.session.commit()
+
+    @staticmethod
+    def get_user_device_type(user_agent: str) -> str:
+        """Возвращает значение user_device_type на основе user agent."""
+        for device in ["smart", "mobile", "web"]:
+            if device in user_agent.lower():
+                return device
+        return "other"
