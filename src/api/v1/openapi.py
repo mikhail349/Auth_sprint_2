@@ -6,7 +6,7 @@ from flask import Blueprint, render_template
 from src.core.config import BASE_DIR
 
 
-openapi = Blueprint("openapi", __name__)
+openapi = Blueprint("openapi", __name__, url_prefix="/openapi")
 
 
 def render_schema(filename: str) -> str:

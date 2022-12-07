@@ -54,6 +54,18 @@ class JWTSettings(BaseConfig):
     jwt_refresh_token_expires: int = Field(864000, env='JWT_REFRESH_TOKEN_EXPIRES')
 
 
+class YandexOAuth2Settings(BaseConfig):
+    """Настройки для работы с Яндекс OAuth2."""
+    client_id: str = Field(None, env="YANDEX_OAUTH2_CLIENT_ID")
+    """ИД клиента."""
+    client_secret: str = Field(None, env="YANDEX_OAUTH2_CLIENT_SECRET")
+    """Секрет клиента."""
+    token_url: str = Field("https://oauth.yandex.ru/token", env="YANDEX_OAUTH2_TOKEN_URL")
+    """URL получения токена."""
+    base_url: str = Field("https://login.yandex.ru/info", env="YANDEX_OAUTH2_BASE_URL")
+    """URL получения информации из Яндекс API."""
+
+
 class AppSettings(BaseConfig):
     default_page: int = 1
     """Номер страницы по умолчанию."""
@@ -65,3 +77,4 @@ postgres_settings = PostgresSettings()
 redis_settings = RedisSettings()
 jwt_settings = JWTSettings()
 app_settings = AppSettings()
+yandex_oauth2_settings = YandexOAuth2Settings()
