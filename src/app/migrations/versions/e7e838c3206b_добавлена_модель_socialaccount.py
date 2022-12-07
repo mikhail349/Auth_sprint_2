@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = 'e7e838c3206b'
-down_revision = '2f7ea957b2c3'
+down_revision = 'a45604cd7586'
 branch_labels = None
 depends_on = None
 
@@ -28,8 +28,6 @@ def upgrade():
     sa.UniqueConstraint('id'),
     sa.UniqueConstraint('social_id', 'social_name', name='social_unique')
     )
-    with op.batch_alter_table('auth_history', schema=None) as batch_op:
-        batch_op.create_unique_constraint(None, ['id'])
 
     with op.batch_alter_table('permissions', schema=None) as batch_op:
         batch_op.create_unique_constraint(None, ['id'])
@@ -64,9 +62,6 @@ def downgrade():
         batch_op.drop_constraint(None, type_='unique')
 
     with op.batch_alter_table('permissions', schema=None) as batch_op:
-        batch_op.drop_constraint(None, type_='unique')
-
-    with op.batch_alter_table('auth_history', schema=None) as batch_op:
         batch_op.drop_constraint(None, type_='unique')
 
     op.drop_table('social_accounts')
