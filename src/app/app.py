@@ -12,9 +12,12 @@ from src.api.v1.perms import Permissions
 from src.api.v1.roles import Roles
 from src.db.db import db, init_db
 from src.app.commands import init_commands
-
+from src.utils.jaeger_tracing import configure_tracer
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 BASE_API_URL = "/api/v1"
+
+configure_tracer()
 
 app = Flask(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
@@ -25,6 +28,9 @@ app.config.from_mapping(redis_settings.uppercased_dict())
 # jwt
 app.config.from_mapping(jwt_settings.uppercased_dict())
 jwt.init_app(app)
+
+#jaeger
+FlaskInstrumentor().instrument_app(app)
 
 # blueprints
 root = Blueprint(BASE_API_URL, __name__, url_prefix=BASE_API_URL)

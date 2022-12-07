@@ -73,8 +73,14 @@ class AppSettings(BaseConfig):
     """Размер страницы по умолчанию."""
 
 
+class JaegerSettings(BaseConfig):
+    jaeger_host: str = "jaeger"
+    jaeger_port: int = 6831
+
+
 postgres_settings = PostgresSettings()
 redis_settings = RedisSettings()
 jwt_settings = JWTSettings()
 app_settings = AppSettings()
 yandex_oauth2_settings = YandexOAuth2Settings()
+jaeger_settings = JaegerSettings()
