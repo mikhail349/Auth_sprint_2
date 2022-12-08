@@ -1,6 +1,6 @@
 import os
 
-from pydantic import BaseSettings, Field
+from pydantic import BaseSettings, Field, Required
 
 BASE_DIR = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -49,9 +49,11 @@ class RedisSettings(BaseConfig):
 
 class JWTSettings(BaseConfig):
     jwt_token_location: list[str] = ["headers"]
-    jwt_secret_key: str = Field("super-secret", env='JWT_SECRET_KEY')
-    jwt_access_token_expires: int = Field(3600, env='JWT_ACCESS_TOKEN_EXPIRES')
-    jwt_refresh_token_expires: int = Field(864000, env='JWT_REFRESH_TOKEN_EXPIRES')
+    jwt_access_token_expires: int = Field(3600, env="JWT_ACCESS_TOKEN_EXPIRES")
+    jwt_refresh_token_expires: int = Field(864000, env="JWT_REFRESH_TOKEN_EXPIRES")
+    jwt_algorithm: str = Field("RS256", env="JWT_ALGORITHM")
+    jwt_private_key_path: str = Field(Required, env="JWT_PRIVATE_KEY_PATH")
+    jwt_public_key_path: str = Field(Required, env="JWT_PUBLIC_KEY_PATH")
 
 
 class YandexOAuth2Settings(BaseConfig):

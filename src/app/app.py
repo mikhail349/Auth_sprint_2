@@ -5,13 +5,13 @@ from flask_restful import Api
 from src.api.v1 import user
 from src.api.v1.openapi import openapi
 from src.api.v1.oauth.oauth import oauth
-from src.app.extensions import jwt
 
-from src.core.config import jwt_settings, redis_settings
+from src.core.config import redis_settings
 from src.api.v1.perms import Permissions
 from src.api.v1.roles import Roles
 from src.db.db import db, init_db
 from src.app.commands import init_commands
+from src.services.jwt import init_jwt
 
 
 BASE_API_URL = "/api/v1"
@@ -23,8 +23,7 @@ app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config.from_mapping(redis_settings.uppercased_dict())
 
 # jwt
-app.config.from_mapping(jwt_settings.uppercased_dict())
-jwt.init_app(app)
+init_jwt(app)
 
 # blueprints
 root = Blueprint(BASE_API_URL, __name__, url_prefix=BASE_API_URL)
