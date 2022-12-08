@@ -4,11 +4,12 @@ from flask import Blueprint, request, jsonify
 
 from src.services.user import UserService
 from src.services.oauth2 import OAuth2
+from src.utils.decorators import superuser_required
 
 
 def create_blueprint(social_name: str, url_prefix: str,
                      client_id: str, client_secret: str,
-                     token_url: str, base_url: str) -> Blueprint:
+                     auth_url: str, token_url: str, base_url: str, redirect_url: str) -> Blueprint:
     """Создать blueprint, реализующий endpoint /login для OAuth2.
 
     Args:
@@ -16,8 +17,10 @@ def create_blueprint(social_name: str, url_prefix: str,
         url_prefix: url префикс
         client_id: ИД клиента сервиса провайдера
         client_secret: секретный ключ клиента сервиса провайдера
+        auth_url: url для получения кода
         token_url: url для получения токена по коду
         base_url: базовый url API провайдера
+        redirect_url: url для callback, куда будет передан код авторизации
 
     Returns:
         Blueprint: blueprint
@@ -25,11 +28,17 @@ def create_blueprint(social_name: str, url_prefix: str,
     """
     blueprint = Blueprint(social_name, __name__, url_prefix=url_prefix)
 
-    @blueprint.route("/login", methods=["POST"])
-    def login():
-        """Логин по средством кода."""
-        code = request.json.get("code", None)
+    @blueprint.route("/info", methods=["GET"])
+    @superuser_required()
+    def get_info():
+        """Получить данные, необходимые для OAuth2."""
+        return jsonify(client_id=client_id, auth_url=auth_url, redirect_url=redirect_url)
 
+    @blueprint.route("/tokens", methods=["GET"])
+    @superuser_required()
+    def get_tokens():
+        """Получить токены доступа посредством OAuth2 кода."""
+        code = request.args.get("code")
         oauth2 = OAuth2(client_id=client_id, client_secret=client_secret, token_url=token_url, base_url=base_url)
 
         response = oauth2.get_auth(code)

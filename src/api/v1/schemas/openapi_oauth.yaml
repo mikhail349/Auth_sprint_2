@@ -1,0 +1,133 @@
+openapi: 3.0.3
+info:
+  title: API авторизации посредством OAuth2
+  description: |-
+    Возможности:
+    - Получить информацию для провайдера
+    - На основании кода авторизации получить access- и refresh-токены
+    
+    Доступные провайдеры:
+    - Яндекс
+  termsOfService: http://swagger.io/terms/
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+tags:
+  - name: oauth
+components:
+  schemas:
+    AuthInfo:
+      type: object
+      properties:
+        auth_url:
+          type: string
+          format: uri
+          example: https://oauth.yandex.ru/authorize
+        client_id:
+          type: string
+          format: uuid
+          example: Gcc55edda7acd4128877d02b94430896a
+        redirect_url:
+          type: string
+          format: uri
+          example: https://<auth_service>/api/v1/oauth/ya/tokens
+          
+    Tokens:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXN1bHQiOiJZb3UgYXJlIHZlcnkgc21hcnQhIn0.GZvDoQdT9ldwmlPOrZWrpiaHas0DiFmZlytr1dhaxi4
+        refresh_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXN1bHQiOiJZb3UgYXJlIGF3ZXNvbWUhIn0.PhRXjIVL1yUhAND4uiE-p6V2rXHQ0drCj9156thJAJg
+
+    AuthError:
+      type: object
+      properties:
+        error:
+          type: string
+          example: invalid_grant
+        error_description:
+          type: string
+          example: Code has expired
+          
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+  responses:
+    UnauthorizedError:
+      description: Access-token отсутствует/невалидный или срок действия истек
+    
+security:
+  - BearerAuth: [] 
+
+paths:
+  /oauth/{provider_name}/info:
+    get:
+      tags:
+        - oauth
+      summary: Получить информацию для провайдера
+      description: Получить информацию для авторизации через провайдера
+      parameters:
+        - name: provider_name
+          in: path
+          description: Название провайдера
+          required: true
+          schema:
+            type: string
+            enum: [ya]
+            example: ya
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthInfo'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /oauth/{provider_name}/tokens:
+    get:
+      tags:
+        - oauth
+      summary: Получить access- и refresh-токены
+      description: Получить access- и refresh-токены на основании кода авторизации 
+      parameters:
+        - name: provider_name
+          in: path
+          description: Название провайдера
+          required: true
+          schema:
+            type: string
+            enum: [ya]
+            example: ya
+        - name: code
+          in: query
+          description: Код авторизации
+          required: true
+          schema:
+            type: string
+            example: 123456
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tokens'
+        '400':
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  

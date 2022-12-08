@@ -1,6 +1,6 @@
 import os
 
-from pydantic import BaseSettings, Field
+from pydantic import BaseSettings, Field, Required
 
 BASE_DIR = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -49,9 +49,11 @@ class RedisSettings(BaseConfig):
 
 class JWTSettings(BaseConfig):
     jwt_token_location: list[str] = ["headers"]
-    jwt_secret_key: str = Field("super-secret", env='JWT_SECRET_KEY')
-    jwt_access_token_expires: int = Field(3600, env='JWT_ACCESS_TOKEN_EXPIRES')
-    jwt_refresh_token_expires: int = Field(864000, env='JWT_REFRESH_TOKEN_EXPIRES')
+    jwt_access_token_expires: int = Field(3600, env="JWT_ACCESS_TOKEN_EXPIRES")
+    jwt_refresh_token_expires: int = Field(864000, env="JWT_REFRESH_TOKEN_EXPIRES")
+    jwt_algorithm: str = Field("RS256", env="JWT_ALGORITHM")
+    jwt_private_key_path: str = Field(Required, env="JWT_PRIVATE_KEY_PATH")
+    jwt_public_key_path: str = Field(Required, env="JWT_PUBLIC_KEY_PATH")
 
 
 class YandexOAuth2Settings(BaseConfig):
@@ -60,10 +62,14 @@ class YandexOAuth2Settings(BaseConfig):
     """ИД клиента."""
     client_secret: str = Field(None, env="YANDEX_OAUTH2_CLIENT_SECRET")
     """Секрет клиента."""
+    auth_url: str = Field("https://oauth.yandex.ru/authorize", env="YANDEX_OAUTH2_AUTH_URL")
+    """URL получения кода."""
     token_url: str = Field("https://oauth.yandex.ru/token", env="YANDEX_OAUTH2_TOKEN_URL")
     """URL получения токена."""
     base_url: str = Field("https://login.yandex.ru/info", env="YANDEX_OAUTH2_BASE_URL")
     """URL получения информации из Яндекс API."""
+    redirect_url: str = Field("https://<auth_service>/api/v1/oauth/ya/tokens", env="YANDEX_OAUTH2_REDIRECT_URL")
+    """URL для callback, куда будет передан код авторизации."""
 
 
 class AppSettings(BaseConfig):

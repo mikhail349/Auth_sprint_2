@@ -7,7 +7,9 @@ ya = create_blueprint(
     url_prefix="/ya",
     client_id=settings.client_id,
     client_secret=settings.client_secret,
+    auth_url=settings.auth_url,
     token_url=settings.token_url,
-    base_url=settings.base_url
+    base_url=settings.base_url,
+    redirect_url=settings.redirect_url
 )
 """Blueprint Yandex OAuth2."""

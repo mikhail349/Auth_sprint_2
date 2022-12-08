@@ -11,7 +11,6 @@ from src.models.auth_history import AuthEvent
 from src.models.user import User
 from src.models.social_account import SocialAccount
 from src.services.user import UserService
-from src.services.social_account import SocialAccountService
 from src.storages.token import get_token_manager
 from src.utils.decorators import superuser_required, user_required
 

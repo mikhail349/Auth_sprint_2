@@ -270,7 +270,7 @@ class UserService(BaseService):
         user.roles.remove(role)
         db.session.add(user)
         db.session.commit()
-    
+
     @classmethod
     def remove_social_account(cls, user: User, social_account: SocialAccount):
         """Отвязать аккаунт соцсети."""
