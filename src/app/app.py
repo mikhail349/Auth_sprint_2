@@ -53,7 +53,7 @@ init_db(app)
 @app.before_request
 def before_request():
     request_id = request.headers.get('X-Request-Id')
-    if not request_id and not app.config["DEBUG"]:
+    if not request_id and not app.debug:
         raise RuntimeError('request id is required')
 
 
