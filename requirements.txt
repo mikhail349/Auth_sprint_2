@@ -20,3 +20,8 @@ requests==2.28.1
 cryptography==38.0.4
 
 pytest==7.2.0
+
+opentelemetry-api==1.14.0
+opentelemetry-sdk==1.14.0
+opentelemetry-instrumentation-flask==0.35b0
+opentelemetry-exporter-jaeger==1.14.0
