@@ -60,10 +60,14 @@ class YandexOAuth2Settings(BaseConfig):
     """ИД клиента."""
     client_secret: str = Field(None, env="YANDEX_OAUTH2_CLIENT_SECRET")
     """Секрет клиента."""
+    auth_url: str = Field("https://oauth.yandex.ru/authorize", env="YANDEX_OAUTH2_AUTH_URL")
+    """URL получения кода."""
     token_url: str = Field("https://oauth.yandex.ru/token", env="YANDEX_OAUTH2_TOKEN_URL")
     """URL получения токена."""
     base_url: str = Field("https://login.yandex.ru/info", env="YANDEX_OAUTH2_BASE_URL")
     """URL получения информации из Яндекс API."""
+    redirect_url: str = Field("https://<auth_service>/api/v1/oauth/ya/tokens", env="YANDEX_OAUTH2_REDIRECT_URL")
+    """URL для callback, куда будет передан код авторизации."""
 
 
 class AppSettings(BaseConfig):

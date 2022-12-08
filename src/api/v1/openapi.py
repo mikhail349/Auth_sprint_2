@@ -36,3 +36,8 @@ def account():
 @openapi.route("/admin", methods=["GET"])
 def admin():
     return render_schema("openapi_admin.yaml")
+
+
+@openapi.route("/oauth", methods=["GET"])
+def oauth():
+    return render_schema("openapi_oauth.yaml")

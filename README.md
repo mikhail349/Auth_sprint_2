@@ -8,6 +8,7 @@
 
 1. API личного кабинета пользователя доступно по api `/api/v1/openapi/account`
 2. API администратора прав и ролей доступно по api `/api/v1/openapi/admin`
+3. API авторизации посредством OAuth2 доступно по api `/api/v1/openapi/oauth`
 
 ## Первый запуск
 
