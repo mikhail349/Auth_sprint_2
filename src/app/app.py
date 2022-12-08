@@ -1,19 +1,21 @@
-from flask import Flask, Blueprint, request
+from http import HTTPStatus
+
+from flask import Blueprint, Flask, jsonify, request
 from flask_migrate import Migrate
 from flask_restful import Api
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 from src.api.v1 import user
-from src.api.v1.openapi import openapi
 from src.api.v1.oauth.oauth import oauth
-
-from src.core.config import redis_settings
+from src.api.v1.openapi import openapi
 from src.api.v1.perms import Permissions
 from src.api.v1.roles import Roles
-from src.db.db import db, init_db
 from src.app.commands import init_commands
+from src.core.config import redis_settings
+from src.db.db import db, init_db
 from src.services.jwt import init_jwt
 from src.utils.jaeger_tracing import configure_tracer
+from src.utils.rate_limit import is_request_limit_exceeded
 
 
 BASE_API_URL = "/api/v1"
@@ -54,6 +56,12 @@ def before_request():
     request_id = request.headers.get('X-Request-Id')
     if not request_id and not app.debug:
         raise RuntimeError('request id is required')
+
+
+@app.before_request
+def check_rate_limit():
+    if is_request_limit_exceeded(request.remote_addr) and not app.debug:
+        return jsonify(HTTPStatus.TOO_MANY_REQUESTS)
 
 
 if __name__ == "__main__":
