@@ -1,8 +1,9 @@
-from http import HTTPStatus
 import functools
+from http import HTTPStatus
 
-from flask import jsonify
-from flask_jwt_extended import verify_jwt_in_request, get_jwt, get_jwt_identity
+from flask import jsonify, request
+from flask_jwt_extended import get_jwt, get_jwt_identity, verify_jwt_in_request
+from opentelemetry import trace as ot_trace
 
 from src.api.v1.response_messages import NO_ACCESS, USER_DOESNT_EXIST
 from src.models.user import User
@@ -35,3 +36,16 @@ def user_required():
             return endpoint(user=user, *args, **kwargs)
         return wrapper
     return decorator
+
+
+def trace(func):
+    """Декоратор для трассировок любых функций."""
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        request_id = request.headers.get('X-Request-Id')
+        tracer = ot_trace.get_tracer(__name__)
+        span = tracer.start_span(func.__name__)
+        span.set_attribute('http.request_id', request_id)
+        span.end()
+        return func(*args, **kwargs)
+    return wrapper
