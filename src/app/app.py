@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint, request
 from flask_migrate import Migrate
 from flask_restful import Api
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
@@ -48,6 +48,13 @@ api.add_resource(Roles, f"{BASE_API_URL}/roles", f"{BASE_API_URL}/roles/<string:
 migrate = Migrate(app, db)
 init_commands(app)
 init_db(app)
+
+
+@app.before_request
+def before_request():
+    request_id = request.headers.get('X-Request-Id')
+    if not request_id and not app.config["DEBUG"]:
+        raise RuntimeError('request id is required')
 
 
 if __name__ == "__main__":
