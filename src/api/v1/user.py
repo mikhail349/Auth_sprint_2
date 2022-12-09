@@ -65,8 +65,8 @@ def logout():
 
 
 @user.route("/refresh_token", methods=["POST"])
-@jwt_required(refresh=True)
-def refresh():
+@user_required(refresh=True)
+def refresh(user):
     """Token refresh endpoint"""
 
     jwt_dict = get_jwt()
@@ -80,6 +80,7 @@ def refresh():
         return jsonify(messages.REFRESH_FAILED), HTTPStatus.UNAUTHORIZED
 
     token_manager.revoke_token_jti(refresh_jti)
+
     access_token, refresh_token = UserService.create_tokens(user)
     return jsonify(access_token=access_token, refresh_token=refresh_token), HTTPStatus.OK
 
