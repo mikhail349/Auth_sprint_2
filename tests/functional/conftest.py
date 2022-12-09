@@ -16,6 +16,7 @@ def app():
     """Фикстура приложения Flask."""
     with current_app.app_context():
         flush_redis()
+        current_app.debug = True
         yield current_app
         flush_redis()
 
@@ -23,6 +24,7 @@ def app():
 @pytest.fixture(scope="class")
 def client(app, request):
     """Фикстура клиента Flask."""
+   
     client = app.test_client()
     request.cls.client = client
     yield client

@@ -23,12 +23,12 @@ def superuser_required():
     return decorator
 
 
-def user_required():
+def user_required(*jwt_args, **jwt_kwargs):
     """Декоратор доступа, который в endpoint передает инстанс user."""
     def decorator(endpoint):
         @functools.wraps(endpoint)
         def wrapper(*args, **kwargs):
-            verify_jwt_in_request()
+            verify_jwt_in_request(*jwt_args, **jwt_kwargs)
             identity = get_jwt_identity()
             user = User.query.filter_by(login=identity).one_or_none()
             if not user:
