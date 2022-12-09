@@ -210,7 +210,7 @@ class UserService(BaseService):
 
         """
         additional_claims = {
-            "permissions": UserService.get_permissions(user.login),
+            "permissions": cls.get_permissions(user.login),
             "is_superuser": user.is_superuser,
         }
         access_token = create_access_token(identity=user.login, additional_claims=additional_claims)
