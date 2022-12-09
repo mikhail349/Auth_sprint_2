@@ -11,7 +11,7 @@ from src.services.base import BaseService
 from src.services.auth_history import AuthHistoryService
 from src.storages.token import get_token_manager
 from src.utils.context_managers import transaction
-from src.utils.random import generate_string
+from src.utils.random_utils import generate_string
 
 
 class UserService(BaseService):

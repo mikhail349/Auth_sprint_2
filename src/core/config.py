@@ -45,6 +45,8 @@ class RedisSettings(BaseConfig):
     """Номер базы данных для хранения токенов в Redis."""
     redis_db_tokens_access_refresh_map: int = 1
     """Номер базы данных для хранения маппинга access/refresh в Redis."""
+    redis_db_tokens_rate_limit: int = 2
+    """Номер базы данных для хранения маппинга количества запросов."""
 
 
 class JWTSettings(BaseConfig):
@@ -77,6 +79,8 @@ class AppSettings(BaseConfig):
     """Номер страницы по умолчанию."""
     default_page_size: int = 10
     """Размер страницы по умолчанию."""
+    rate_limit: int = 25
+    """Максимальное количество запросов для обработки."""
 
 
 class JaegerSettings(BaseConfig):
