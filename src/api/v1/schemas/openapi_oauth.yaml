@@ -8,6 +8,7 @@ info:
     
     Доступные провайдеры:
     - Яндекс
+    - Google
   termsOfService: http://swagger.io/terms/
   version: 1.0.0
 externalDocs:
