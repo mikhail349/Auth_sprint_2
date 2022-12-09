@@ -61,7 +61,7 @@ def before_request():
 @app.before_request
 def check_rate_limit():
     if is_request_limit_exceeded(request.remote_addr) and not app.debug:
-        return jsonify(HTTPStatus.TOO_MANY_REQUESTS)
+        return Response(status=HTTPStatus.TOO_MANY_REQUESTS)
 
 
 if __name__ == "__main__":
