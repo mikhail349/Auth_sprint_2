@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from flask import Blueprint, Flask, jsonify, request
+from flask import Blueprint, Flask, request, Response
 from flask_migrate import Migrate
 from flask_restful import Api
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
@@ -31,7 +31,7 @@ app.config.from_mapping(redis_settings.uppercased_dict())
 # jwt
 init_jwt(app)
 
-#jaeger
+# jaeger
 FlaskInstrumentor().instrument_app(app)
 
 # blueprints
