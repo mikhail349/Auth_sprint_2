@@ -60,7 +60,7 @@ def before_request():
 
 @app.before_request
 def check_rate_limit():
-    if is_request_limit_exceeded(request.remote_addr) and not app.debug:
+    if not app.debug and is_request_limit_exceeded(request.remote_addr):
         return Response(status=HTTPStatus.TOO_MANY_REQUESTS)
 
 
