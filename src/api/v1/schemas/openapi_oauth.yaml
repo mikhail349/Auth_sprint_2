@@ -81,7 +81,7 @@ paths:
           required: true
           schema:
             type: string
-            enum: [ya]
+            enum: [ya,google]
             example: ya
       responses:
         '200':
@@ -106,7 +106,7 @@ paths:
           required: true
           schema:
             type: string
-            enum: [ya]
+            enum: [ya,google]
             example: ya
         - name: code
           in: query
