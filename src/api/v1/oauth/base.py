@@ -1,15 +1,16 @@
 from http import HTTPStatus
+from typing import Callable
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify, request
 
-from src.services.user import UserService
 from src.services.oauth2 import OAuth2
-from src.utils.decorators import superuser_required
+from src.services.user import UserService
 
 
 def create_blueprint(social_name: str, url_prefix: str,
                      client_id: str, client_secret: str,
-                     auth_url: str, token_url: str, base_url: str, redirect_url: str) -> Blueprint:
+                     auth_url: str, token_url: str, base_url: str,
+                     redirect_url: str, get_id: Callable) -> Blueprint:
     """Создать blueprint, реализующий endpoint /login для OAuth2.
 
     Args:
@@ -21,6 +22,7 @@ def create_blueprint(social_name: str, url_prefix: str,
         token_url: url для получения токена по коду
         base_url: базовый url API провайдера
         redirect_url: url для callback, куда будет передан код авторизации
+        get_id: метод для получения идентификатора пользователя
 
     Returns:
         Blueprint: blueprint
@@ -51,7 +53,7 @@ def create_blueprint(social_name: str, url_prefix: str,
             return (response.content, response.status_code, response.headers.items())
 
         user = UserService.get_or_create_by_social_account(
-            social_id=info.get('sub') or info.get('id'), social_name=social_name)
+            social_id=get_id(info), social_name=social_name)
         access_token, refresh_token = UserService.login(user)
         return jsonify(access_token=access_token, refresh_token=refresh_token)
 
