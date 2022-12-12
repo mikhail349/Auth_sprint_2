@@ -8,6 +8,7 @@ info:
     
     Доступные провайдеры:
     - Яндекс
+    - Google
   termsOfService: http://swagger.io/terms/
   version: 1.0.0
 externalDocs:
@@ -80,7 +81,7 @@ paths:
           required: true
           schema:
             type: string
-            enum: [ya]
+            enum: [ya,google]
             example: ya
       responses:
         '200':
@@ -105,7 +106,7 @@ paths:
           required: true
           schema:
             type: string
-            enum: [ya]
+            enum: [ya,google]
             example: ya
         - name: code
           in: query

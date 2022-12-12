@@ -74,6 +74,22 @@ class YandexOAuth2Settings(BaseConfig):
     """URL для callback, куда будет передан код авторизации."""
 
 
+class GoogleOAuth2Settings(BaseConfig):
+    """Настройки для работы с Googlge OAuth2."""
+    client_id: str = Field(None, env="GOOGLE_OAUTH2_CLIENT_ID")
+    """ИД клиента."""
+    client_secret: str = Field(None, env="GOOGLE_OAUTH2_CLIENT_SECRET")
+    """Секрет клиента."""
+    auth_url: str = Field("https://accounts.google.com/o/oauth2/auth", env="GOOGLE_OAUTH2_AUTH_URL")
+    """URL получения кода."""
+    token_url: str = Field("https://accounts.google.com/o/oauth2/token", env="GOOGLE_OAUTH2_TOKEN_URL")
+    """URL получения токена."""
+    base_url: str = Field("https://openidconnect.googleapis.com/v1/userinfo", env="GOOGLE_OAUTH2_BASE_URL")
+    """URL получения информации из Яндекс API."""
+    redirect_url: str = Field("https://<auth_service>/api/v1/oauth/google/tokens", env="GOOGLE_OAUTH2_REDIRECT_URL")
+    """URL для callback, куда будет передан код авторизации."""
+
+
 class AppSettings(BaseConfig):
     default_page: int = 1
     """Номер страницы по умолчанию."""
@@ -93,4 +109,5 @@ redis_settings = RedisSettings()
 jwt_settings = JWTSettings()
 app_settings = AppSettings()
 yandex_oauth2_settings = YandexOAuth2Settings()
+google_oauth2_settings = GoogleOAuth2Settings()
 jaeger_settings = JaegerSettings()

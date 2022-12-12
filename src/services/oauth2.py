@@ -10,13 +10,16 @@ class OAuth2:
         client_secret: секретный ключ клиента сервиса провайдера
         token_url: url для получения токена по коду
         base_url: базовый url API провайдера
+        redirect_url: url для переадресации
 
     """
-    def __init__(self, client_id: str, client_secret: str, token_url: str, base_url: str) -> None:
+    def __init__(self, client_id: str, client_secret: str, token_url: str,
+                 base_url: str, redirect_url: str) -> None:
         self.client_id = client_id
         self.client_secret = client_secret
         self.token_url = token_url
         self.base_url = base_url
+        self.redirect_url = redirect_url
 
     def get_auth(self, code: str) -> Response:
         """Получить авторизационные данные.
@@ -35,7 +38,8 @@ class OAuth2:
             "grant_type": "authorization_code",
             "code": code,
             "client_id": self.client_id,
-            "client_secret": self.client_secret
+            "client_secret": self.client_secret,
+            "redirect_uri": self.redirect_url
         }
         return requests.post(self.token_url, headers=headers, data=data)
 
@@ -54,6 +58,6 @@ class OAuth2:
         }
 
         params = {
-            "format": "json"
+            'access_token': token
         }
         return requests.get(self.base_url, headers=headers, params=params)

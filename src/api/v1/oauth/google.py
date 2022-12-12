@@ -1,15 +1,15 @@
-from src.core.config import yandex_oauth2_settings as settings
+from src.core.config import google_oauth2_settings as settings
 from src.api.v1.oauth.base import create_blueprint
 
 
 def get_id(data):
     """Метод для получения уникального идентификатора пользователя."""
-    return data["id"]
+    return data["sub"]
 
 
-ya = create_blueprint(
-    social_name="yandex",
-    url_prefix="/ya",
+google = create_blueprint(
+    social_name="google",
+    url_prefix="/google",
     client_id=settings.client_id,
     client_secret=settings.client_secret,
     auth_url=settings.auth_url,
@@ -18,4 +18,4 @@ ya = create_blueprint(
     redirect_url=settings.redirect_url,
     get_id=get_id
 )
-"""Blueprint Yandex OAuth2."""
+"""Blueprint Google OAuth2."""
