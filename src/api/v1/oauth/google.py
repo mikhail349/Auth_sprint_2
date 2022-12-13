@@ -2,9 +2,32 @@ from src.core.config import google_oauth2_settings as settings
 from src.api.v1.oauth.base import create_blueprint
 
 
-def get_id(data):
+def get_user_id(data):
     """Метод для получения уникального идентификатора пользователя."""
     return data["sub"]
+
+
+def construct_auth_request(headers: dict, data: dict):
+    """Метод для переопределения параметров запроса авторизации.
+
+    Args:
+        headers: заголовки запроса
+        data: тело запроса
+
+    """
+    data["redirect_uri"] = settings.redirect_url
+
+
+def construct_info_request(token: str, headers: dict, params: dict):
+    """Метод для переопределения параметров запроса информации о пользователе.
+
+    Args:
+        token: токен доступа
+        headers: заголовки запроса
+        params: параметры запроса
+
+    """
+    params["access_token"] = token
 
 
 google = create_blueprint(
@@ -16,6 +39,8 @@ google = create_blueprint(
     token_url=settings.token_url,
     base_url=settings.base_url,
     redirect_url=settings.redirect_url,
-    get_id=get_id
+    get_user_id=get_user_id,
+    construct_auth_request=construct_auth_request,
+    construct_info_request=construct_info_request
 )
 """Blueprint Google OAuth2."""

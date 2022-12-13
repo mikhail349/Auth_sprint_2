@@ -24,7 +24,7 @@ def app():
 @pytest.fixture(scope="class")
 def client(app, request):
     """Фикстура клиента Flask."""
-   
+
     client = app.test_client()
     request.cls.client = client
     yield client
