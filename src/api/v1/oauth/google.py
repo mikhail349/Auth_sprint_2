@@ -7,17 +7,17 @@ def get_user_id(data):
     return data["sub"]
 
 
-def construct_info_request(token: str, headers: dict, **_):
+def construct_auth_request(**kwargs):
     """Метод для переопределения параметров запроса авторизации.
 
     Args:
-        data: тело запроса
+        kwargs: опциональные параметры запроса (headers, data)
 
     """
-    data["redirect_uri"] = settings.redirect_url
+    kwargs["data"]["redirect_uri"] = settings.redirect_url
 
 
-def construct_info_request(token: str, params: dict, **_):
+def construct_info_request(token: str, **kwargs):
     """Метод для переопределения параметров запроса информации о пользователе.
 
     Args:
