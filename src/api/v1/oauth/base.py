@@ -88,7 +88,7 @@ def create_blueprint(
             "client_secret": client_secret
         }
         if construct_auth_request:
-            construct_auth_request(data)
+            construct_auth_request(headers=headers, data=data)
         return requests.post(token_url, headers=headers, data=data)
 
     def get_user_info(token: str):
