@@ -23,7 +23,7 @@ class SocialAccount(db.Model):
 
     user_id = db.Column(
         UUID(as_uuid=True),
-        db.ForeignKey("users.id"),
+        db.ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False
     )
     user = db.relationship(
