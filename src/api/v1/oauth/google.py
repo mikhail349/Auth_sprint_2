@@ -7,27 +7,25 @@ def get_user_id(data):
     return data["sub"]
 
 
-def construct_auth_request(headers: dict, data: dict):
+def construct_auth_request(data: dict):
     """Метод для переопределения параметров запроса авторизации.
 
     Args:
-        headers: заголовки запроса
         data: тело запроса
 
     """
     data["redirect_uri"] = settings.redirect_url
 
 
-def construct_info_request(token: str, headers: dict, params: dict):
+def construct_info_request(token: str, **kwargs):
     """Метод для переопределения параметров запроса информации о пользователе.
 
     Args:
         token: токен доступа
-        headers: заголовки запроса
-        params: параметры запроса
+        kwargs: опциональные параметры запроса (headers, params)
 
     """
-    params["access_token"] = token
+    kwargs["params"]["access_token"] = token
 
 
 google = create_blueprint(
