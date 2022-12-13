@@ -53,12 +53,12 @@ def create_blueprint(
 
         response = get_auth(code)
         if response.status_code != HTTPStatus.OK:
-            return (response.content, response.status_code, response.headers.items())
+            return response.content, response.status_code, response.headers.items()
         auth = response.json()
 
         response = get_user_info(auth['access_token'])
         if response.status_code != HTTPStatus.OK:
-            return (response.content, response.status_code, response.headers.items())
+            return response.content, response.status_code, response.headers.items()
         info = response.json()
 
         user = UserService.get_or_create_by_social_account(
@@ -88,7 +88,7 @@ def create_blueprint(
             "client_secret": client_secret
         }
         if construct_auth_request:
-            construct_auth_request(headers, data)
+            construct_auth_request(headers=headers, data=data)
         return requests.post(token_url, headers=headers, data=data)
 
     def get_user_info(token: str):
@@ -104,7 +104,7 @@ def create_blueprint(
         headers = {}
         params = {}
         if construct_info_request:
-            construct_info_request(token, headers, params)
+            construct_info_request(token, headers=headers, params=params)
         return requests.get(base_url, headers=headers, params=params)
 
     return blueprint

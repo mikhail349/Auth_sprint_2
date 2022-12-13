@@ -7,16 +7,15 @@ def get_user_id(data):
     return data["id"]
 
 
-def construct_info_request(token: str, headers: dict, params: dict):
+def construct_info_request(token: str, **kwargs):
     """Метод для переопределения параметров запроса информации о пользователе.
 
     Args:
         token: токен доступа
-        headers: заголовки запроса
-        params: параметры запроса
+        kwargs: опциональные параметры запроса (headers, params)
 
     """
-    headers["Authorization"] = "bearer {}".format(token)
+    kwargs["headers"]["Authorization"] = "bearer {}".format(token)
 
 
 ya = create_blueprint(
