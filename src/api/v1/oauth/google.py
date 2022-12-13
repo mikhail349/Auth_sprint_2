@@ -17,7 +17,7 @@ def construct_info_request(token: str, headers: dict, **_):
     data["redirect_uri"] = settings.redirect_url
 
 
-def construct_info_request(token: str, **kwargs):
+def construct_info_request(token: str, params: dict, **_):
     """Метод для переопределения параметров запроса информации о пользователе.
 
     Args:
