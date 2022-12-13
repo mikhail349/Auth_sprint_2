@@ -102,6 +102,7 @@ class AppSettings(BaseConfig):
 class JaegerSettings(BaseConfig):
     jaeger_host: str = "jaeger"
     jaeger_port: int = 6831
+    enable_tracing: bool = True
 
 
 postgres_settings = PostgresSettings()

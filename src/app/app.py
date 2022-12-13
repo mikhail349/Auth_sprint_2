@@ -11,7 +11,7 @@ from src.api.v1.openapi import openapi
 from src.api.v1.perms import Permissions
 from src.api.v1.roles import Roles
 from src.app.commands import init_commands
-from src.core.config import redis_settings
+from src.core.config import redis_settings, jaeger_settings
 from src.db.db import db, init_db
 from src.services.jwt import init_jwt
 from src.utils.jaeger_tracing import configure_tracer
@@ -53,9 +53,10 @@ init_db(app)
 
 @app.before_request
 def before_request():
-    request_id = request.headers.get('X-Request-Id')
-    if not request_id and not app.debug:
-        raise RuntimeError('request id is required')
+    if jaeger_settings.enable_tracing:
+        request_id = request.headers.get('X-Request-Id')
+        if not request_id:
+            raise RuntimeError('request id is required')
 
 
 @app.before_request
