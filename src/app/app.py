@@ -54,7 +54,7 @@ init_db(app)
 @app.before_request
 def before_request():
     request_id = request.headers.get('X-Request-Id')
-    if jaeger_settings.enable_tracingnot and not request_id:
+    if jaeger_settings.enable_tracing and not request_id:
         raise RuntimeError('request id is required')
 
 
