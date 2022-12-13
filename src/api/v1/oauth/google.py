@@ -7,7 +7,7 @@ def get_user_id(data):
     return data["sub"]
 
 
-def construct_auth_request(data: dict):
+def construct_info_request(token: str, headers: dict, **_):
     """Метод для переопределения параметров запроса авторизации.
 
     Args:
