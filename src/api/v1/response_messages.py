@@ -65,3 +65,15 @@ USER_ROLES_DELETED = {
 SOCIAL_ACCOUNT_NOT_FOUND = {
     "msg": "Social account not found."
 }
+
+ACCOUNT_ACTIVATED = {
+    "msg": "Your account is activated!"
+}
+
+VERIFICATION_LINK_EXPIRED = {
+    "msg": "Verification link expired."
+}
+
+VERIFICATION_LINK_INVALID = {
+    "msg": "Verification link invalid."
+}

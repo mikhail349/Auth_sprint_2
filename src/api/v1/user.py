@@ -1,16 +1,19 @@
 from http import HTTPStatus
 
+import jwt as py_jwt
+
 from flask import Blueprint, jsonify, request, Response
 from flask_jwt_extended import get_jwt, jwt_required
 
 import src.api.v1.response_messages as messages
 from src.app.extensions import jwt
-from src.core.config import app_settings
+from src.core.config import app_settings, jwt_settings
 from src.db.db import db  # noqa F401
 from src.models.auth_history import AuthEvent
 from src.models.user import User
 from src.models.social_account import SocialAccount
 from src.services.user import UserService
+from src.services.notifications import notification_service
 from src.storages.token import get_token_manager
 from src.utils.decorators import superuser_required, user_required
 
@@ -103,6 +106,8 @@ def register():
     # create user in db
     UserService.create(username, password)
 
+    notification_service.send_registration_link(username)
+
     return jsonify(messages.USER_CREATED), HTTPStatus.OK
 
 
@@ -166,3 +171,22 @@ def remove_social_account(user, id):
 
     UserService.remove_social_account(user, social_account)
     return Response(status=HTTPStatus.OK)
+
+
+@user.route("/confirm_email", methods=["GET"])
+def confirm_email():
+    """Подтверждение адреса электронной почты для активации аккаунта."""
+    token = request.args.get("token")
+    try:
+        payload = py_jwt.decode(token, jwt_settings.dict()["jwt_secret"],
+                                algorithms=[jwt_settings.dict()["jwt_algorithm"]])
+        username = payload['sub']
+        user = User.query.filter_by(login=username).one_or_none()
+        UserService.confirm_email(user)
+        return jsonify(messages.ACCOUNT_ACTIVATED), HTTPStatus.OK
+
+    except py_jwt.ExpiredSignatureError:
+        return jsonify(messages.VERIFICATION_LINK_EXPIRED), HTTPStatus.BAD_REQUEST
+
+    except py_jwt.InvalidTokenError:
+        return jsonify(messages.VERIFICATION_LINK_INVALID), HTTPStatus.BAD_REQUEST

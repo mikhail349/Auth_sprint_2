@@ -23,6 +23,7 @@ class User(db.Model):
     )
     login = db.Column(db.String(length=100), unique=True, nullable=False)
     password = db.Column(db.String(length=100), nullable=False)
+    email = db.Column(db.String(length=100), unique=True, nullable=False)
     roles = relationship(
         Role,
         secondary=user_role,
@@ -30,6 +31,7 @@ class User(db.Model):
         cascade="all,delete",
     )
     is_superuser = db.Column(db.Boolean, default=False, nullable=False)
+    is_confirmed = db.Column(db.Boolean, nullable=False, default=False)
     auth_events = relationship(
         AuthEvent,
         cascade="all,delete"
