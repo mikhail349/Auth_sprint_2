@@ -56,6 +56,7 @@ class JWTSettings(BaseConfig):
     jwt_algorithm: str = Field("RS256", env="JWT_ALGORITHM")
     jwt_private_key_path: str = Field(Required, env="JWT_PRIVATE_KEY_PATH")
     jwt_public_key_path: str = Field(Required, env="JWT_PUBLIC_KEY_PATH")
+    jwt_secret: str = Field('Required', env='JWT_SECRET')
 
 
 class YandexOAuth2Settings(BaseConfig):
@@ -105,6 +106,10 @@ class JaegerSettings(BaseConfig):
     enable_tracing: bool = True
 
 
+class NotificationsSettings(BaseConfig):
+    notifications_api: str = "api"
+
+
 postgres_settings = PostgresSettings()
 redis_settings = RedisSettings()
 jwt_settings = JWTSettings()
@@ -112,3 +117,4 @@ app_settings = AppSettings()
 yandex_oauth2_settings = YandexOAuth2Settings()
 google_oauth2_settings = GoogleOAuth2Settings()
 jaeger_settings = JaegerSettings()
+notifications_settings = NotificationsSettings()

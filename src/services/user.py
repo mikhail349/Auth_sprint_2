@@ -33,6 +33,7 @@ class UserService(BaseService):
         """
         user = cls.model(login=login,
                          password=cls.hash_password(password),
+                         is_confirmed=False,
                          **kwargs)
         db.session.add(user)
         db.session.commit()
@@ -121,7 +122,7 @@ class UserService(BaseService):
             User | None: Пользователь или None
 
         """
-        user = User.query.filter_by(login=login).one_or_none()
+        user = User.query.filter_by(login=login, is_confirmed=True).one_or_none()
         if not user:
             return None
 
@@ -285,3 +286,18 @@ class UserService(BaseService):
             if device in user_agent.lower():
                 return device
         return "other"
+
+    @classmethod
+    def confirm_email(cls, user: User) -> User:
+        """Подтверждение электронной почты.
+
+        Args:
+            user: инстанс пользователя
+
+        Returns:
+            User: пользователь
+
+        """
+        user.is_confirmed = True
+        db.session.commit()
+        return user
