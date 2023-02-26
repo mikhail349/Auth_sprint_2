@@ -19,12 +19,13 @@ class UserService(BaseService):
     model = User
 
     @classmethod
-    def create(cls, login: str, password: str, **kwargs) -> User:
+    def create(cls, login: str, password: str, email: str, **kwargs) -> User:
         """Создать пользователя.
 
         Args:
             login: логин
             password: пароль
+            email: эл. почта
             **kwargs: остальные агрументы
 
         Returns:
@@ -33,6 +34,7 @@ class UserService(BaseService):
         """
         user = cls.model(login=login,
                          password=cls.hash_password(password),
+                         email=email,
                          is_confirmed=False,
                          **kwargs)
         db.session.add(user)
@@ -40,12 +42,18 @@ class UserService(BaseService):
         return user
 
     @classmethod
-    def create_by_social_account(cls, social_id: str, social_name: str) -> User:
+    def create_by_social_account(
+        cls,
+        social_id: str,
+        social_name: str,
+        social_email: str
+    ) -> User:
         """Создать пользователя по аккаунту из соц. сети.
 
         Args:
             social_id: ИД пользователя в соц. сети
             social_name: название соц. сети
+            social_email: эл. почта в соц. сети
 
         Returns:
             User: пользователь
@@ -55,7 +63,12 @@ class UserService(BaseService):
             login = cls.generate_login()
             password = generate_string()
 
-            user = cls.model(login=login, password=cls.hash_password(password))
+            user = cls.model(
+                login=login,
+                password=cls.hash_password(password),
+                email=social_email,
+                is_confirmed=True,
+            )
             social_account = SocialAccount(user=user, social_id=social_id, social_name=social_name)
             db.session.add(user)
             db.session.add(social_account)
@@ -63,13 +76,14 @@ class UserService(BaseService):
             return user
 
     @classmethod
-    def update(cls, user: User, login: str, password: str, **kwargs) -> User:
+    def update(cls, user: User, login: str, password: str, email: str, **kwargs) -> User:
         """Обновить пользователя.
 
         Args:
             user: инстанс пользователя
             login: логин
             password: пароль
+            email: эл. почта
             **kwargs: остальные агрументы
 
         Returns:
@@ -78,24 +92,26 @@ class UserService(BaseService):
         """
         user.login = login
         user.password = cls.hash_password(password)
+        user.email = email
         for k, v in kwargs.items():
             setattr(user, k, v)
         db.session.commit()
         return user
 
     @classmethod
-    def create_superuser(cls, login: str, password: str) -> User:
+    def create_superuser(cls, login: str, password: str, email: str) -> User:
         """Создать суперпользователя.
 
         Args:
             login: логин
             password: пароль
+            email: эл. почта
 
         Returns:
             User: пользователь
 
         """
-        return cls.create(login=login, password=password, is_superuser=True)
+        return cls.create(login=login, password=password, email=email, is_superuser=True)
 
     @classmethod
     def generate_login(cls) -> str:
@@ -239,12 +255,18 @@ class UserService(BaseService):
             return account.user
 
     @classmethod
-    def get_or_create_by_social_account(cls, social_id: str, social_name: str) -> User:
+    def get_or_create_by_social_account(
+        cls,
+        social_id: str,
+        social_name: str,
+        social_email: str
+    ) -> User:
         """Получить или создать, если не существует, пользователя по аккаунту из соц. сети.
 
         Args:
             social_id: ИД пользователя в соц. сети
             social_name: название соц. сети
+            social_email: эл. почта в соц. сети
 
         Returns:
             User: пользователь
@@ -252,7 +274,11 @@ class UserService(BaseService):
         """
         user = cls.get_by_social_account(social_id=social_id, social_name=social_name)
         if not user:
-            user = cls.create_by_social_account(social_id=social_id, social_name=social_name)
+            user = cls.create_by_social_account(
+                social_id=social_id,
+                social_name=social_name,
+                social_email=social_email,
+            )
         return user
 
     @classmethod

@@ -86,7 +86,7 @@ class GoogleOAuth2Settings(BaseConfig):
     token_url: str = Field("https://accounts.google.com/o/oauth2/token", env="GOOGLE_OAUTH2_TOKEN_URL")
     """URL получения токена."""
     base_url: str = Field("https://openidconnect.googleapis.com/v1/userinfo", env="GOOGLE_OAUTH2_BASE_URL")
-    """URL получения информации из Яндекс API."""
+    """URL получения информации из Google API."""
     redirect_url: str = Field("https://<auth_service>/api/v1/oauth/google/tokens", env="GOOGLE_OAUTH2_REDIRECT_URL")
     """URL для callback, куда будет передан код авторизации."""
 

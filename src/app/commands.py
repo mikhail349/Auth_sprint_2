@@ -17,13 +17,14 @@ def init_commands(app: Flask):
         """Создать суперпользователя."""
         try:
             login = input('Введите логин: ')
+            email = input('Введите эл. почту: ')
             password1 = getpass.getpass('Введите пароль: ')
             password2 = getpass.getpass('Повторите пароль: ')
             if password1 != password2:
                 raise Exception('Введенные пароли не совпадают')
 
             with app.app_context():
-                UserService.create_superuser(login, password1)
+                UserService.create_superuser(login, password1, email)
                 print(f'Суперпользователь {login} успешно создан.')
 
         except Exception:
