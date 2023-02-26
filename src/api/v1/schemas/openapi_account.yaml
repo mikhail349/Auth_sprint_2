@@ -7,7 +7,7 @@ info:
     - Вход в аккаунт (получение access- и refresh-tokens)
     - Обновление access-token
     - Выход из аккаунта (перевод access-token в категорию невалидных)
-    - Изменение логина и/или пароля
+    - Изменение данных пользователя
     - Получение истории входа в аккаунт
   termsOfService: http://swagger.io/terms/
   version: 1.3.2
@@ -49,7 +49,7 @@ components:
         refresh_token:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZXN1bHQiOiJZb3UgYXJlIGF3ZXNvbWUhIn0.PhRXjIVL1yUhAND4uiE-p6V2rXHQ0drCj9156thJAJg
-    User:
+    UserLogin:
       required:
         - username
         - password
@@ -57,10 +57,27 @@ components:
       properties:
         username:
           type: string
-          example: my_login
+          example: alex
         password:
           type: string
           example: '12345'
+    User:
+      required:
+        - username
+        - password
+        - email
+      type: object
+      properties:
+        username:
+          type: string
+          example: alex
+        password:
+          type: string
+          example: '12345'
+        email:
+          type: string
+          format: email
+          example: alex@mail.com
           
     LoginHistory:
       required:
@@ -101,9 +118,9 @@ paths:
       tags:
         - пользователь
       summary: Регистрация
-      description: Зарегистрировать нового пользователя по логину и паролю
+      description: Зарегистрировать нового пользователя
       requestBody:
-        description: Логин и пароль
+        description: Имя пользователя, пароль, email
         content:
           application/json:
             schema:
@@ -134,7 +151,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserLogin'
         required: true
       responses:
         '200':
@@ -174,12 +191,12 @@ paths:
     put:
       tags:
         - пользователь
-      summary: Изменить логин и/или пароль
-      description: Изменить логин и/или пароль и получить новые access- и refresh-tokens
+      summary: Изменить данные пользователя
+      description: Изменить имя пользователя, пароль, email и получить новые access- и refresh-tokens
       security:
         - BearerAuth: []
       requestBody:
-        description: Логин и пароль
+        description: Имя пользователя, пароль, email
         content:
           application/json:
             schema:
