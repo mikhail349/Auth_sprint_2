@@ -23,7 +23,7 @@ class User(db.Model):
     )
     login = db.Column(db.String(length=100), unique=True, nullable=False)
     password = db.Column(db.String(length=100), nullable=False)
-    email = db.Column(db.String(length=100), unique=True, nullable=False)
+    email = db.Column(db.String(length=100), unique=True, nullable=True)
     roles = relationship(
         Role,
         secondary=user_role,

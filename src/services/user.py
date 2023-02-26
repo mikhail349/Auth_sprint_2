@@ -122,7 +122,7 @@ class UserService(BaseService):
             User | None: Пользователь или None
 
         """
-        user = User.query.filter_by(login=login, is_confirmed=True).one_or_none()
+        user = User.query.filter_by(login=login).one_or_none()
         if not user:
             return None
 
