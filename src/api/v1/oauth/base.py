@@ -58,13 +58,10 @@ def create_blueprint(
             return response.content, response.status_code, response.headers.items()
         auth = response.json()
 
-        print('access_token', auth['access_token'])
-
         response = get_user_info(auth['access_token'])
         if response.status_code != HTTPStatus.OK:
             return response.content, response.status_code, response.headers.items()
         info = response.json()
-        print('info', info)
 
         user = UserService.get_or_create_by_social_account(
             social_id=get_user_id(info),
