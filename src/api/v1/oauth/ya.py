@@ -7,6 +7,11 @@ def get_user_id(data):
     return data["id"]
 
 
+def get_email(data):
+    """Метод для получения эл. почты."""
+    return data['default_email']
+
+
 def construct_info_request(token: str, **kwargs):
     """Метод для переопределения параметров запроса информации о пользователе.
 
@@ -28,6 +33,7 @@ ya = create_blueprint(
     base_url=settings.base_url,
     redirect_url=settings.redirect_url,
     get_user_id=get_user_id,
+    get_email=get_email,
     construct_info_request=construct_info_request
 )
 """Blueprint Yandex OAuth2."""

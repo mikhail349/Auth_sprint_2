@@ -94,7 +94,9 @@ def register():
 
     username = request.json.get("username", None)
     password = request.json.get("password", None)
-    if not username or not password:
+    email = request.json.get("email", None)
+
+    if not username or not password or not email:
         return jsonify(messages.WRONG_INPUT), HTTPStatus.BAD_REQUEST
 
     # check username and password
@@ -104,7 +106,7 @@ def register():
         return jsonify(messages.USER_EXISTS), HTTPStatus.BAD_REQUEST
 
     # create user in db
-    UserService.create(username, password)
+    UserService.create(username, password, email)
 
     notification_service.send_registration_link(username)
 
@@ -116,11 +118,13 @@ def register():
 def update(user):
     username = request.json.get("username", None)
     password = request.json.get("password", None)
-    if not username or not password:
+    email = request.json.get("email", None)
+
+    if not username or not password or not email:
         return jsonify(messages.WRONG_INPUT), HTTPStatus.BAD_REQUEST
 
     # update user in db
-    UserService.update(user, login=username, password=password)
+    UserService.update(user, login=username, password=password, email=email)
 
     access_token, refresh_token = UserService.create_tokens(user)
     return jsonify(access_token=access_token, refresh_token=refresh_token), HTTPStatus.OK
@@ -178,15 +182,17 @@ def confirm_email():
     """Подтверждение адреса электронной почты для активации аккаунта."""
     token = request.args.get("token")
     try:
-        payload = py_jwt.decode(token, jwt_settings.dict()["jwt_secret"],
-                                algorithms=[jwt_settings.dict()["jwt_algorithm"]])
-        username = payload['sub']
-        user = User.query.filter_by(login=username).one_or_none()
-        UserService.confirm_email(user)
-        return jsonify(messages.ACCOUNT_ACTIVATED), HTTPStatus.OK
-
+        payload = py_jwt.decode(token, jwt_settings.jwt_secret,
+                                algorithms=[jwt_settings.jwt_algorithm])
     except py_jwt.ExpiredSignatureError:
         return jsonify(messages.VERIFICATION_LINK_EXPIRED), HTTPStatus.BAD_REQUEST
 
     except py_jwt.InvalidTokenError:
         return jsonify(messages.VERIFICATION_LINK_INVALID), HTTPStatus.BAD_REQUEST
+
+    username = payload['sub']
+    user = User.query.filter_by(login=username).one_or_none()
+    if not user:
+        return jsonify(messages.USER_DOESNT_EXIST), HTTPStatus.BAD_REQUEST
+    UserService.confirm_email(user)
+    return jsonify(messages.ACCOUNT_ACTIVATED), HTTPStatus.OK

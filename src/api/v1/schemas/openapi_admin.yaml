@@ -19,6 +19,8 @@ tags:
     description: Добавление, изменение, удаление и просмотр ролей
   - name: пользователь
     description: Добавление/исключение из роли
+servers:
+  - url: /api/v1
 components:
   schemas:
     Permission:

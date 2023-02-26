@@ -7,6 +7,11 @@ def get_user_id(data):
     return data["sub"]
 
 
+def get_email(data):
+    """Метод для получения эл. почты."""
+    return data["email"]
+
+
 def construct_auth_request(**kwargs):
     """Метод для переопределения параметров запроса авторизации.
 
@@ -38,6 +43,7 @@ google = create_blueprint(
     base_url=settings.base_url,
     redirect_url=settings.redirect_url,
     get_user_id=get_user_id,
+    get_email=get_email,
     construct_auth_request=construct_auth_request,
     construct_info_request=construct_info_request
 )

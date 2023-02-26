@@ -17,6 +17,7 @@ def create_blueprint(
     base_url: str,
     redirect_url: str,
     get_user_id: Callable,
+    get_email: Callable,
     construct_auth_request: Callable = None,
     construct_info_request: Callable = None
 ) -> Blueprint:
@@ -32,8 +33,9 @@ def create_blueprint(
         base_url: базовый url API провайдера
         redirect_url: url для callback, куда будет передан код авторизации
         get_user_id: метод для получения идентификатора пользователя
-        constuct_auth_request: метод для переопределения параметров запроса авторизации
-        constuct_info_request: метод для переопределения параметров запроса информации
+        get_email: метод для получения эл. почты
+        construct_auth_request: метод для переопределения параметров запроса авторизации
+        construct_info_request: метод для переопределения параметров запроса информации
 
     Returns:
         Blueprint: blueprint
@@ -63,7 +65,8 @@ def create_blueprint(
 
         user = UserService.get_or_create_by_social_account(
             social_id=get_user_id(info),
-            social_name=social_name
+            social_name=social_name,
+            social_email=get_email(info),
         )
         access_token, refresh_token = UserService.login(user)
         return jsonify(access_token=access_token, refresh_token=refresh_token)
