@@ -16,6 +16,8 @@ externalDocs:
   url: http://swagger.io
 tags:
   - name: oauth
+servers:
+  - url: /api/v1
 components:
   schemas:
     AuthInfo:

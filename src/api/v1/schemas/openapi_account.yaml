@@ -17,6 +17,8 @@ externalDocs:
 tags:
   - name: пользователь
     description: Действия с пользователем
+servers:
+  - url: /api/v1
 components:
   schemas:
     Message:
