@@ -344,7 +344,7 @@ paths:
         '404':
           $ref: '#/components/responses/RoleNotFound'
           
-  /users/{user_id}/roles/{role_name}:
+  /user/{user_id}/roles/{role_name}:
     post:
       tags:
         - пользователь
