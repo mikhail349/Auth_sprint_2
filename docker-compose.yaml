@@ -17,8 +17,6 @@ services:
     restart: always
     depends_on:
       - redis
-    ports:
-      - 5432:5432
     networks:
       - my_network
   app:
