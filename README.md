@@ -15,7 +15,8 @@
 
 1. Создать файл `.env` с переменными окружения по аналогии с файлом `.env.example`
 2. Создать docker volume для Postgres `docker volume create <name>`
-3. Запустить докер `docker compose up --build`
+3. Создать docker network `docker network create my_network`
+4. Запустить докер `docker compose up --build`
 
 ## Первый локальный запуск
 
