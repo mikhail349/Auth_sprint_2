@@ -230,6 +230,7 @@ class UserService(BaseService):
             "permissions": cls.get_permissions(user.login),
             "is_superuser": user.is_superuser,
             "user_id": str(user.id),
+            "email": user.email,
         }
         access_token = create_access_token(identity=user.login, additional_claims=additional_claims)
         refresh_token = create_refresh_token(identity=user.login)
