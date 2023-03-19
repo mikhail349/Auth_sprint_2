@@ -153,6 +153,16 @@ def set_role(user_id, role_name):
     return jsonify(messages.USER_ROLES_UPDATED), HTTPStatus.OK
 
 
+@user.route("is_jti_revoked/<string:jti>", methods=["GET"])
+@superuser_required()
+def is_jti_revoked(jti: str):
+    """Узнать, отозван ли jti."""
+    token_manager = get_token_manager()
+    token_manager.is_jti_revoked(jti)
+    is_revoked = token_manager.is_jti_revoked(jti)
+    return jsonify({'is_revoked': is_revoked}), HTTPStatus.OK
+
+
 @user.route("/<string:user_id>/roles/<string:role_name>", methods=["DELETE"])
 @superuser_required()
 def remove_role(user_id, role_name):
